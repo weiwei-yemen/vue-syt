@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Vite 对 public/ 目录有特殊处理： public/ 目录下的文件在开发服务器和构建后，会被当作项目的根路径直接提供服务。-->
     <link rel="icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/app-loading.css" />
     <title>尚医通</title>
@@ -11,7 +12,7 @@
     <div id="app">
       <div id="app-loading"></div>
     </div>
-<!--    <script src="https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>-->
+    <!--    <script src="https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>-->
     <script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
     <script type="module" src="/src/main.ts"></script>
   </body>

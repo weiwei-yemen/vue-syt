@@ -1,5 +1,6 @@
 // 全局 CSS 变量
 //@import "./variables.css";
+// scss的import在编译器就会把文件引入进来，没有运行开销
 @import "./reset.css";
 
 html {
@@ -12,8 +13,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   font-size: 14px;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial,
-    sans-serif;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "微软雅黑", Arial, sans-serif;
 }
 
 #app {
@@ -71,7 +72,6 @@ div:focus {
   margin: 30px;
 }
 
-
 .m-l-20 {
   margin-left: 20px;
 }
@@ -93,7 +93,6 @@ div:focus {
 .m-20 {
   margin: 20px;
 }
-
 
 .m-l-10 {
   margin-left: 10px;
@@ -131,12 +130,10 @@ div:focus {
   margin-bottom: 5px;
 }
 
-
-
-body{
+body {
   color: #7f7f7f;
 }
-.gray{
+.gray {
   color: #7f7f7f;
 }
 a {

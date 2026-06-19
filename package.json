@@ -2,7 +2,7 @@
   "name": "syt-vue3",
   "version": "3.3.3",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open",
     "build:prod": "vue-tsc --noEmit && vite build",
     "build": "vite build",
     "preview:stage": "pnpm build:stage && vite preview",

@@ -1,4 +1,5 @@
 <template>
+  <!-- el-affix 是 Element Plus 提供的固钉组件（也叫"粘性定位"组件）。 -->
   <el-affix class="affix_container">
     <div class="header_wrapper">
       <div class="header_content">
@@ -10,15 +11,19 @@
           <span class="helper">帮助中心</span>
           <div v-if="!token" class="login finger" @click="loginHandler">登陆/注册</div>
           <el-dropdown v-else @command="handleCommand" class="finger">
-              <span class="el-dropdown-link">
-                {{name}}
-                <el-icon><ArrowDown /></el-icon>
-              </span>
+            <span class="el-dropdown-link">
+              {{ name }}
+              <el-icon><ArrowDown /></el-icon>
+            </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item class="dropdown_item" command="certification">实名认证</el-dropdown-item>
+                <el-dropdown-item class="dropdown_item" command="certification"
+                  >实名认证</el-dropdown-item
+                >
                 <el-dropdown-item class="dropdown_item" command="order">挂号订单</el-dropdown-item>
-                <el-dropdown-item class="dropdown_item" command="patient">就诊人管理</el-dropdown-item>
+                <el-dropdown-item class="dropdown_item" command="patient"
+                  >就诊人管理</el-dropdown-item
+                >
                 <el-dropdown-item class="dropdown_item" command="logOut">退出登陆</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -39,8 +44,8 @@ export default defineComponent({
 import { ref, reactive, toRefs, computed, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ArrowDown } from "@element-plus/icons-vue"
-import {useUserInfoStore} from "@/store/modules/user";
-import {getToken} from "@/utils/tokens";
+import { useUserInfoStore } from "@/store/modules/user"
+import { getToken } from "@/utils/tokens"
 const userInfoStore = useUserInfoStore()
 const route = useRoute()
 const router = useRouter()
@@ -65,7 +70,7 @@ const handleCommand = (command: string | number | object) => {
     userInfoStore.reset()
     router.push({ path: "/" })
   } else {
-    router.push({ path: `/user/${command}`})
+    router.push({ path: `/user/${command}` })
   }
 }
 </script>

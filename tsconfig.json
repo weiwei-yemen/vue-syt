@@ -27,7 +27,24 @@
       "vitest/globals",
       "unplugin-vue-define-options/macros-global"
     ],
-    /** baseUrl 用来告诉编译器到哪里去查找模块，使用非相对模块时必须配置此项 */
+
+    /**
+    为什么在vite.config.ts中配置过@别名了这里还需要配置？
+    - vite.config.ts 中的 resolve.alias
+      作用于 Vite 构建和运行时，告诉 Vite："打包时，遇到 @/ 开头的路径，替换成 src/ 目录"，只影响代码实际运行和打包的行为
+    - tsconfig.json 中的 paths
+      作用于 TypeScript 编译器和 IDE，告诉 TypeScript："类型检查时，遇到 @/ 开头的路径，去 src/ 目录下找对应的类型"，只影响编辑器的类型提示、跳转定义、代码补全
+    */
+
+    /** 
+      1.baseUrl 的作用是告诉 TypeScript 编译器，以哪个目录作为非相对路径导入的基准目录。使用非相对模块时必须配置此项！！
+        对于：import utils from "utils/utils"  // 非相对路径
+        TypeScript 会依次查找：
+        - paths 中是否有匹配的规则
+        - baseUrl 目录下是否有 utils/utils.ts
+        - node_modules 中是否有 utils 包
+      2.baseUrl定义基准目录，设为"."就是项目tsconfig.json所在的目录 
+    */
     "baseUrl": ".",
     /** 非相对模块导入的路径映射配置，根据 baseUrl 配置进行路径计算 */
     "paths": {

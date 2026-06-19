@@ -12,18 +12,25 @@ import AutoImport from "unplugin-auto-import/vite"
 import Components from "unplugin-vue-components/vite"
 import Icons from "unplugin-icons/vite"
 import IconsResolver from "unplugin-icons/resolver"
-import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
+import { AntDesignVueResolver } from "unplugin-vue-components/resolvers"
 /** 配置项文档：https://cn.vitejs.dev/config */
 export default (configEnv: ConfigEnv): UserConfigExport => {
   const viteEnv = loadEnv(configEnv.mode, process.cwd()) as ImportMetaEnv
-  const { VITE_PUBLIC_PATH,VITE_BASE_API_HTTP,VITE_BASE_API,VITE_BASE_API_PORT } = viteEnv
+  const { VITE_PUBLIC_PATH, VITE_BASE_API_HTTP, VITE_BASE_API, VITE_BASE_API_PORT } = viteEnv
   console.log("viteEnv", viteEnv)
   return {
     /** 打包时根据实际情况修改 base */
     base: VITE_PUBLIC_PATH,
     resolve: {
       alias: {
-        /** @ 符号指向 src 目录 */
+        /**
+         * @ 符号指向 src 目录
+         * 1.__dirname是node.js的一个全局变量，值就是vite.config.ts所在的目录（/Users/simon/projects/syt-vue3-master）
+         * 2.这里的__dirname依赖"@types/node": "^18.15.3"这个库，Node.js 本身是用 JavaScript/C++ 写的，
+         *    并不自带 TypeScript 类型。当你安装了这个包后，就能在 TypeScript 中获得 Node.js 全局 API 的类型提示和类型检查
+         * 3.resolve函数的作用：把入参拼接在一起：/Users/simon/projects/syt-vue3-master/src
+         *
+         * */
         "@": resolve(__dirname, "./src")
       }
     },
