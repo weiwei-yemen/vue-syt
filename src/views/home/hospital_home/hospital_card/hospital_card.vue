@@ -1,5 +1,10 @@
 <template>
-  <el-card shadow="hover" class="card_wrapper" :body-style="cardStyle as any" @click="goHospitalInfoHandler">
+  <el-card
+    shadow="hover"
+    class="card_wrapper"
+    :body-style="cardStyle as any"
+    @click="goHospitalInfoHandler"
+  >
     <div class="left_card_wrapper">
       <div class="card_title">{{ props.data.hosname }}</div>
       <div class="card_content">
@@ -40,6 +45,7 @@
         </div>
       </div>
     </div>
+    <!-- base64方式引入图片：data:image/jpeg;base64,/9j/4AAQSkZJRg... -->
     <div class="right_card_wrapper">
       <img :src="`data:image/jpeg;base64,${props.data?.logoData}`" alt="" />
     </div>
@@ -53,9 +59,9 @@ export default defineComponent({
 })
 </script>
 <script setup lang="ts">
-import {ref, reactive, toRefs, computed, watch, defineProps, PropType} from "vue"
+import { ref, reactive, toRefs, computed, watch, defineProps, PropType } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import {HospitalInfoInterface} from "@/api/modules/home/interface";
+import { HospitalInfoInterface } from "@/api/modules/home/interface"
 const router = useRouter()
 const props = defineProps({
   data: {
@@ -75,7 +81,7 @@ const goHospitalInfoHandler = () => {
   router.push({
     path: "/hospital/registration",
     query: {
-      code:props.data.hoscode
+      code: props.data.hoscode
     }
   })
 }

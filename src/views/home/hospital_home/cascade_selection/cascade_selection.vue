@@ -2,9 +2,11 @@
   <div class="wrapper">
     <div class="title">{{ props.title }}</div>
     <div class="list-group" v-if="props.data">
+      <!-- 110000 === "110000"  // false，类型不同
+            110000 == "110000"   // true，会自动转换类型后比较 -->
       <div
         v-for="(item, index) in props.data"
-        :class="{ active: item.value == activeId }"
+        :class="{ active: item.value == props.activeId }"
         class="list_item"
         :key="item.id"
         @click="changeActiveId(item.value)"
@@ -23,12 +25,12 @@ export default defineComponent({
 </script>
 <script setup lang="ts">
 import { PropType } from "vue"
-import {AreaInterfaceRes, HospitalLevelInterfaceRes} from "@/api/modules/home/interface";
+import { AreaInterfaceRes, HospitalLevelInterfaceRes } from "@/api/modules/home/interface"
 
 const props = defineProps({
   data: {
     type: Array as PropType<HospitalLevelInterfaceRes[] | AreaInterfaceRes[]>,
-    default: () => [],
+    default: () => []
   },
   title: {
     type: String

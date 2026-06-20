@@ -8,8 +8,10 @@ import "@/router/permission"
 import "uno.css"
 import "normalize.css"
 import "element-plus/dist/index.css"
+
 // 全局加载项目的公共样式
 import "@/styles/index.scss"
+
 //引入element-plus
 import ElementPlus from "element-plus"
 import * as ElementPlusIconsVue from "@element-plus/icons-vue"
@@ -30,7 +32,7 @@ for (const [key, component] of Object.entries(Icons)) {
  * 普通 Vue Router 的行为：
   页面 A → 页面 B → 页面 C
   点浏览器后退，回到 B，但页面是重新渲染的，之前滚动的位置、表单填写的内容都丢失了
-  
+
   页面栈路由的行为：
   页面 A → 页面 B → 页面 C（栈：[A, B, C]）
   后退时，C 被"弹出"，B 直接从缓存中恢复，保留滚动位置、输入内容等状态

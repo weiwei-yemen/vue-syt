@@ -1,7 +1,8 @@
 <template>
   <div class="hospital_wrapper card">
     <div class="hospital_left">
-      <CascadeSelection title="医院" />
+      <!-- 级联选择 -->
+      <CascadeSelection title="医院:" />
       <CascadeSelection
         :data="pageData.levelDataList"
         :activeId="checkedInfo.hostype"
@@ -16,7 +17,8 @@
         :changeCheckedActiveIdHandler="changeCheckedActiveIdHandler"
         title="地区:"
       />
-      <!--      医院列表-->
+
+      <!-- 医院列表 -->
       <div class="hospital_List">
         <template v-for="(item, index) in pageData.hospitalList" :key="item.id">
           <HospitalCard :data="item" />
@@ -24,6 +26,7 @@
       </div>
       <el-empty v-if="pageData.hospitalList.length === 0" :image-size="200" />
       <!--        分页-->
+      <!-- :style绑定的属性中可以有两种写法：kebab-case（需要括号）和 camelCase-->
       <el-pagination
         v-model:current-page="pageInfo.currentPage"
         v-model:page-size="pageInfo.pageSize"
@@ -58,15 +61,16 @@ import { ref, reactive, toRefs, computed, onMounted, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import CascadeSelection from "@/views/home/hospital_home/cascade_selection/cascade_selection.vue"
 import HospitalCard from "@/views/home/hospital_home/hospital_card/hospital_card.vue"
-import {getPageList, findByDictCode, getByHosname, getAreaList} from "@/api//modules/home"
+import { getPageList, findByDictCode, getByHosname, getAreaList } from "@/api//modules/home"
 import { usePage } from "@/hooks/usePagination"
 import LinkCardDepartments from "@/views/home/hospital_home/link_card/link_card_departments.vue"
 import LinkCardInfo from "@/views/home/hospital_home/link_card/link_card_info.vue"
+import { AlertOutlined, BellOutlined } from "@ant-design/icons-vue"
 import {
-  AlertOutlined,
-  BellOutlined,
-} from "@ant-design/icons-vue"
-import {AreaInterfaceRes, HospitalInfoInterface, HospitalLevelInterfaceRes} from "@/api/modules/home/interface";
+  AreaInterfaceRes,
+  HospitalInfoInterface,
+  HospitalLevelInterfaceRes
+} from "@/api/modules/home/interface"
 
 const pageData = reactive({
   levelDataList: [] as HospitalLevelInterfaceRes[],
