@@ -1,18 +1,18 @@
 import router from "@/router"
 import NProgress from "nprogress"
 import "nprogress/nprogress.css"
-import {getToken} from "@/utils/tokens";
-import {useUserInfoStore} from "@/store/modules/user";
+import { getToken } from "@/utils/tokens";
+import { useUserInfoStore } from "@/store/modules/user";
 import pinia from "@/store";
-import {staticRoutes,allAsyncRoutes, anyRoutes} from "@/router/routes";
-import {getTreeDataProperty} from "@/utils/utils";
+import { staticRoutes, allAsyncRoutes, anyRoutes } from "@/router/routes";
+import { getTreeDataProperty } from "@/utils/utils";
 NProgress.configure({ showSpinner: false })
 const userInfoStore = useUserInfoStore(pinia)
-const whiteList:string[] = []
+const whiteList: string[] = []
 // 所有异步权限路由的名字集合
-const allAsyncRoutesNameList = getTreeDataProperty(allAsyncRoutes,'name')
+const allAsyncRoutesNameList = getTreeDataProperty(allAsyncRoutes, 'name')
 // 所有静态路由和任意路由的名字集合
-const staticRoutesAndAnyRoutesNameList = getTreeDataProperty([...staticRoutes,...anyRoutes],'name')
+const staticRoutesAndAnyRoutesNameList = getTreeDataProperty([...staticRoutes, ...anyRoutes], 'name')
 // 路由守卫
 router.beforeEach(async (to, _from, next) => {
   NProgress.start()
@@ -31,7 +31,7 @@ router.beforeEach(async (to, _from, next) => {
       // 判断当前用户是否有访问该页面的权限
       // 如果有访问权限，则进入该页面
       next()
-    }else{
+    } else {
       // 其他没有访问权限的页面将被重定向到登录页面
       next(`/home?redirect=${encodeURIComponent(to.fullPath)}`);
       // 调用登陆弹窗

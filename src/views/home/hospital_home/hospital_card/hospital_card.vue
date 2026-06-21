@@ -63,9 +63,11 @@ import { ref, reactive, toRefs, computed, watch, defineProps, PropType } from "v
 import { useRoute, useRouter } from "vue-router"
 import { HospitalInfoInterface } from "@/api/modules/home/interface"
 const router = useRouter()
+
 const props = defineProps({
   data: {
     type: Object as PropType<HospitalInfoInterface>,
+    // 这里可以不用断言，default和required：true保留一个就可以了
     default: () => ({} as HospitalInfoInterface),
     required: true
   }

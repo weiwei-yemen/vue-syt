@@ -48,9 +48,25 @@ const props = defineProps({
     default: () => {}
   }
 })
+
+// 用户点击某选项
+//     ↓
+// @click="changeActiveId(item.value)"
+//     ↓
+// 调用 props.changeCheckedActiveIdHandler(needChangeAttr, id)
+//     ↓
+// 父组件执行 checkedInfo[needChangeAttr] = id
+//     ↓
+// :checkedInfo.hostype 变化 → 重新传 props.activeId 给子组件
+//     ↓
+// :class="{ active: item.value == props.activeId }" 重新计算
+//     ↓
+// 被点击的选项获得 active class → 高亮 ✅
+
 // 单击改变单选项的选中状态
 const changeActiveId = (id: string) => {
   if (props.needChangeAttr) {
+    // 子组件通过方法向父组件传递数据（父组件将定义好的方法传给子组件，子组件触发执行这个方法）
     props.changeCheckedActiveIdHandler(props.needChangeAttr, id)
   }
 }

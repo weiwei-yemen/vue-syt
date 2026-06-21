@@ -41,7 +41,7 @@ export interface HospitalListInterfaceRes {
     paged: boolean
     unpaged: boolean
   }
-  totalPages:number
+  totalPages: number
   totalElements: number
   last: boolean
   first: boolean
@@ -72,7 +72,7 @@ export interface HospitalInfoInterface {
   cityCode: string
   districtCode: string
   address: string
-  logoData:string
+  logoData: string
   intro: string
   route: string
   status: number

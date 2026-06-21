@@ -72,6 +72,12 @@ import {
   HospitalLevelInterfaceRes
 } from "@/api/modules/home/interface"
 
+// 这里其实可以单独定义类型，然后在reactive中使用
+// interface PageDataType {
+//   hospitalList: HospitalInfoInterface[]
+// }
+// const pageData = reactive<PageDataType>
+
 const pageData = reactive({
   levelDataList: [] as HospitalLevelInterfaceRes[],
   districtDataList: [] as AreaInterfaceRes[],
@@ -130,6 +136,17 @@ const checkedInfo = reactive({
 })
 // 改变选中活跃Id方法
 const changeCheckedActiveIdHandler = (attr: string, value: string) => {
+  // checkedInfo[attr]  = value 为什么会编译报错 ？
+  // attr 的类型是 string（任意字符串），TS 无法确定它一定是 "hostype" 或 "districtCode"
+
+  // as keyof typeof checkedInfo做了什么？（告诉 TS，attr 一定是 "hostype" 或 "districtCode"）
+  // checkedInfo                          值：{ hostype: "", districtCode: "" }
+  //     ↓ typeof
+  // typeof checkedInfo                   类型：{ hostype: string, districtCode: string }
+  //     ↓ keyof
+  // keyof typeof checkedInfo             类型："hostype" | "districtCode"
+  //     ↓ as
+  // attr as keyof typeof checkedInfo     断言 attr 是 "hostype" 或 "districtCode"
   checkedInfo[attr as keyof typeof checkedInfo] = value
 }
 // 获取医院等级列表
@@ -182,6 +199,7 @@ const getHospitalPage = async () => {
       districtCode: checkedInfo.districtCode
     })
     pageData.hospitalList = res.content
+    // 后端返回的页码从0开始的
     pageInfo.currentPage = res.number + 1
     pageInfo.pageSize = res.size
     pageInfo.total = res.totalElements
