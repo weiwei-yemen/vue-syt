@@ -27,6 +27,7 @@ export default defineComponent({
 import { PropType } from "vue"
 import { AreaInterfaceRes, HospitalLevelInterfaceRes } from "@/api/modules/home/interface"
 
+// 如果用 defineProps 的泛型写法，就不需要 PropType 了，vue3.3+版本才支持
 const props = defineProps({
   data: {
     type: Array as PropType<HospitalLevelInterfaceRes[] | AreaInterfaceRes[]>,
@@ -49,7 +50,7 @@ const props = defineProps({
   }
 })
 
-// 用户点击某选项
+// 用户点击某选项 （接口回调方式实现父子组件通信是vue2的实现，当前已经不推荐了）
 //     ↓
 // @click="changeActiveId(item.value)"
 //     ↓

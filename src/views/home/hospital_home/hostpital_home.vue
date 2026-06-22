@@ -49,6 +49,8 @@
     </div>
   </div>
 </template>
+
+<!-- 重命名组件 -->
 <script lang="ts">
 import { defineComponent } from "vue"
 
@@ -56,6 +58,7 @@ export default defineComponent({
   name: "hospital_home"
 })
 </script>
+
 <script setup lang="ts">
 import { ref, reactive, toRefs, computed, onMounted, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
@@ -165,6 +168,7 @@ const getHospitalList = async () => {
       dictCode: "",
       hasChildren: false
     }
+    // 在从后端获取的医院等级列表前面，插入一个"全部"选项，然后赋值给页面数据。
     pageData.levelDataList = [whole, ...res]
   } catch (error) {
     console.log(error)
