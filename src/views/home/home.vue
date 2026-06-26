@@ -69,11 +69,18 @@ const appStore = useAppStore()
 const querySearchAsync = async (queryString: string, cb: (arg: any) => void) => {
   console.log("queryString", queryString.trim() !== "")
   if (queryString.trim() !== "") {
+    // 这里应该使用queryString作为参数查询
     getByHosname(searchInfo.keyWord).then((res: any) => {
       console.log("res---", res)
       searchInfo.suggestionsOptions = res.map((item: HospitalInfoInterface) => {
         return {
           ...item,
+          // element自动补全渲染时要求必须有value字段，渲染value字段的值
+          // 也可以直接指定要渲染的字段，不需要在手动添加value字段，推荐
+          // <el-autocomplete
+          //   value-key="hosname"
+          //   :fetch-suggestions="querySearchAsync"
+          // />
           value: item.hosname
         }
       })

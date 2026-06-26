@@ -1,32 +1,33 @@
 <template>
   <div class="registration_wrapper" v-if="pageInfo.hospitalInfo.hospital">
     <div class="title_container">
-      <h2>{{pageInfo.hospitalInfo.hospital?.hosname}}</h2>
+      <h2>{{ pageInfo.hospitalInfo.hospital?.hosname }}</h2>
       <div class="level">
-        <LikeOutlined class="level_icon m-r-5"/>
-        <span>{{pageInfo.hospitalInfo.hospital?.param?.hostypeString}}</span>
+        <LikeOutlined class="level_icon m-r-5" />
+        <span>{{ pageInfo.hospitalInfo.hospital?.param?.hostypeString }}</span>
       </div>
     </div>
     <div class="address_container">
-      <div class='logo-route'>
+      <div class="logo-route">
         <img
           :src="`data:image/jpeg;base64,${pageInfo.hospitalInfo.hospital?.logoData}`"
-          class='hospital-img'
+          class="hospital-img"
           :alt="pageInfo.hospitalInfo.hospital?.hosname"
         />
-        <AimOutlined class='logo-route-icon' />
+        <AimOutlined class="logo-route-icon" />
         <p>
-          具体地址：{{pageInfo.hospitalInfo.hospital?.param?.fullAddress}}
+          具体地址：{{ pageInfo.hospitalInfo.hospital?.param?.fullAddress }}
           <br />
-          规划路线：{{ pageInfo.hospitalInfo.hospital?.route}}
+          规划路线：{{ pageInfo.hospitalInfo.hospital?.route }}
         </p>
       </div>
     </div>
-    <div class='intro'>
+    <div class="intro">
       <h3>医院介绍</h3>
-      <div class='intro-text'>{{pageInfo.hospitalInfo.hospital?.intro}}</div>
+      <div class="intro-text">{{ pageInfo.hospitalInfo.hospital?.intro }}</div>
     </div>
   </div>
+  <!-- 骨架屏组件，用于数据加载时展示占位效果 9行、animated：添加动画效果-->
   <el-skeleton v-else :rows="9" animated />
 </template>
 <script lang="ts">
@@ -36,12 +37,12 @@ export default defineComponent({
 })
 </script>
 <script setup lang="ts">
-import { ref, reactive, toRefs, computed, watch,onMounted } from "vue"
+import { ref, reactive, toRefs, computed, watch, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import {getHospitalInfo} from "@/api/modules/hospital";
-import { LikeOutlined, AimOutlined } from '@ant-design/icons-vue';
-import {ElMessage} from "element-plus";
-import {HospitalInfoInfoInterfaceRes} from "@/api/modules/hospital/interface";
+import { getHospitalInfo } from "@/api/modules/hospital"
+import { LikeOutlined, AimOutlined } from "@ant-design/icons-vue"
+import { ElMessage } from "element-plus"
+import { HospitalInfoInfoInterfaceRes } from "@/api/modules/hospital/interface"
 const route = useRoute()
 const pageInfo = reactive({
   hospitalInfo: {} as HospitalInfoInfoInterfaceRes
@@ -61,17 +62,16 @@ const getHospitalPage = async () => {
 onMounted(() => {
   getHospitalPage()
 })
-
 </script>
 
 <style lang="scss" scoped>
-.title_container{
-  display:flex;
+.title_container {
+  display: flex;
   h2 {
     font-size: 21px;
     color: rgba(0, 0, 0, 0.85);
   }
-  .level{
+  .level {
     margin-left: 10px;
     margin-top: 5px;
   }
@@ -81,7 +81,7 @@ onMounted(() => {
   height: 80px;
   border-radius: 40px;
   margin-left: 10px;
-  transition: all .2s linear;
+  transition: all 0.2s linear;
 }
 
 .logo-route {
@@ -93,7 +93,6 @@ onMounted(() => {
 }
 .intro {
   margin-top: 30px;
-
 }
 
 .intro-text {

@@ -2,6 +2,7 @@
   <div class="wrapper">
     <div class="title_wrapper">
       <div class="left_title">
+        <!-- ant图标库中的组件 -->
         <ClusterOutlined :style="{ color: '#a14c4c' }"></ClusterOutlined>
         <span class="left_title_text">常见科室</span>
       </div>
@@ -22,11 +23,8 @@ export default defineComponent({
 })
 </script>
 <script setup lang="ts">
-import {  reactive} from "vue"
-import {
-  RightOutlined,
-  ClusterOutlined
-} from "@ant-design/icons-vue"
+import { reactive } from "vue"
+import { RightOutlined, ClusterOutlined } from "@ant-design/icons-vue"
 const list = reactive([
   {
     value: "神经内科",
@@ -75,7 +73,7 @@ const list = reactive([
     .left_title_text {
       margin-left: 5px;
     }
-    .right_title{
+    .right_title {
       cursor: pointer;
     }
     .right_title_text {
