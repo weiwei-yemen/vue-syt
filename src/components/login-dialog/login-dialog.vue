@@ -1,13 +1,12 @@
 <template>
   <div class="login_wrapper">
-
-
   <el-dialog
     v-model="userInfoStore.isShowLoginDialog"
     @close="handleClose"
     title="用户登陆"
     width="750px">
     <el-row class="login_main">
+      <!-- 左边的表单 -->
       <el-col :span="12" class="left_main">
         <el-card shadow="never">
           <div v-if="loginModeInfo.loginMode === 0">
@@ -46,7 +45,6 @@
             <div style="text-align: center;">
               <div id='weixinLogin'></div>
             </div>
-
           </div>
 
           <div @click="toggleLoginMode" class="login_mode m-t-10 finger">
@@ -58,12 +56,15 @@
           </div>
         </el-card>
       </el-col>
+
+      <!-- 右边的二维码 -->
       <el-col :span="12" class="right_main">
           <el-row>
             <el-col :span="12">
               <div style="text-align: center;">
                 <img src='@/assets/images/code_login_wechat.png' class='code-image' />
                 <div>
+                  <!-- 微信图标 -->
                   <WechatOutlined />
                 </div>
                 <div>
@@ -77,6 +78,7 @@
               <div style="text-align: center;">
                 <img src='@/assets/images/code_app.png' class='code-image' />
                 <div>
+                  <!-- 手机图标 -->
                   <MobileOutlined />
                 </div>
                 <div>
@@ -212,23 +214,43 @@ const countdownFinish = () => {
 const toggleLoginMode = () => {
   loginModeInfo.loginMode = loginModeInfo.loginMode === 0 ? 1 : 0
   if (loginModeInfo.loginMode === 1) {
+    // 渲染二维码
     wechatLogin()
   }
 }
-// 用户微信登陆
+// 用户微信登陆流程
+// 用户点击"微信扫码登录"
+//        ↓
+// 前端请求后端 getLoginParam(wxRedirectUri) 获取 appid/scope/redirectUri/state，同时开始轮询localStorage是否有token
+//        ↓
+// 调用微信 WxLogin SDK 渲染二维码,同时微信sdk轮询微信服务器，该用户是否在手机上认证没
+//        ↓
+// 用户微信扫码授权
+//        ↓
+// 微信sdk轮询到结果，带 code 回调后端 redirect_uri
+//        ↓
+// 后端拿到code换取微信用户信息，生成 token，并返回302重定向/wxLoginCallBack?token=xxx&name=xxx
+//        ↓
+// 回调页将 token/name 写入 localStorage
+//        ↓
+// 登录弹窗的轮询定时器检测到 token → 关闭弹窗，登录成功
 const wechatLogin = async () => {
   try {
     // 微信回调地址拼接
     console.log(route.path)
+    // window.location.origin：获取当前网站的根地址，包含协议和端口，例如：http://localhost:3333
+    // 前端注册了wxLoginCallBack的路由，对应微信扫码回调页面
     const wxRedirectUri = encodeURIComponent(`${window.location.origin}/wxLoginCallBack`)
     const res = await getLoginParam(wxRedirectUri)
-    // /index中已经以cdn的方式引入了微信登陆的js文件
+
+    // 调用微信sdk渲染二维码，index中已经以cdn的方式引入了微信登陆的js文件
     const obj = new WxLogin({
       self_redirect: true,
       id: 'weixinLogin', // 需要显示的容器id
       appid: res.appid, // 公众号appid wx*******
       scope: res.scope, // 网页默认即可
-      redirect_uri:decodeURIComponent(res.redirectUri), // 授权成功后回调的url
+      // res.redirectUri这的地址是后端的回调地址，用于接受微信授权的code
+      redirect_uri:decodeURIComponent(res.redirectUri),
       state: res.state, // 可设置为简单的随机数加session用来校验
       style: 'black', // 提供"black"、"white"可选。二维码的样式
       href: '', // 外部css文件url，需要https
@@ -237,8 +259,8 @@ const wechatLogin = async () => {
   } catch (error) {
     ElMessage.error((error as any)?.message || 'Has Error')
   }
-
 }
+
 // 用户手机登录
 const loginHandler = async () => {
   try {
@@ -265,7 +287,10 @@ const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
 }
-// 关闭的回调
+
+// 这里关闭的回调为什么没有将store的isShowLoginDialog修改为false？
+// 因为在 el-dialog 上使用了 v-model 双向绑定：
+// v-model 会在用户点击关闭按钮或遮罩层时，自动将 userInfoStore.isShowLoginDialog 设为 false，不需要手动处理。
 const handleClose = () => {
   console.log('handleClose')
   // 重置登陆模式
