@@ -1,68 +1,82 @@
 <template>
   <div class="login_wrapper">
-  <el-dialog
-    v-model="userInfoStore.isShowLoginDialog"
-    @close="handleClose"
-    title="用户登陆"
-    width="750px">
-    <el-row class="login_main">
-      <!-- 左边的表单 -->
-      <el-col :span="12" class="left_main">
-        <el-card shadow="never">
-          <div v-if="loginModeInfo.loginMode === 0">
-            <el-form
-              ref="userFormRef"
-              :model="userForm"
-              status-icon
-              :rules="rules"
-            >
-              <el-form-item label="" prop="phone">
-                <el-input
-                  v-model.phone="userForm.phone"
-                  :prefix-icon="User"
-                  auto-complete
-                  placeholder='请输入手机号码'
-                />
-              </el-form-item>
-              <el-form-item label="" prop="code">
-                <el-input
-                  v-model.phone="userForm.code"
-                  :prefix-icon="Lock"
-                  :disabled="!isPhone"
-                  placeholder='请输入手机验证码'
-                />
-              </el-form-item>
-              <el-form-item>
-                <el-button :disabled="!(isPhone && !showCountdown)" @click="getCode">
-                  <span>获取验证码</span>
-                  <Countdown v-if="showCountdown" title="" :countdown="5" format="(s)" @finish="countdownFinish"></CountDown>
-                </el-button>
-              </el-form-item>
-            </el-form>
-            <el-button type="primary" :disabled="!isAllowLogin" @click="submitForm(userFormRef)" :style="{width:'100%'}">用户登陆</el-button>
-          </div>
-          <div v-if="loginModeInfo.loginMode === 1">
-            <div style="text-align: center;">
-              <div id='weixinLogin'></div>
+    <el-dialog
+      v-model="userInfoStore.isShowLoginDialog"
+      @close="handleClose"
+      title="用户登陆"
+      width="750px"
+    >
+      <el-row class="login_main">
+        <!-- 左边的表单 -->
+        <el-col :span="12" class="left_main">
+          <el-card shadow="never">
+            <div v-if="loginModeInfo.loginMode === 0">
+              <!-- :model="userForm"给验证系统用，告诉验证系统从哪里取数据 -->
+              <el-form ref="userFormRef" :model="userForm" status-icon :rules="rules">
+                <!-- 这里的prop和rules中的key对应 -->
+                <el-form-item label="" prop="phone">
+                  <!-- <el-icon><User /></el-icon>，这里el-input 内部已经帮你包好了 <el-icon> -->
+                  <el-input
+                    v-model="userForm.phone"
+                    :prefix-icon="User"
+                    auto-complete
+                    placeholder="请输入手机号码"
+                  />
+                </el-form-item>
+                <el-form-item label="" prop="code">
+                  <el-input
+                    v-model="userForm.code"
+                    :prefix-icon="Lock"
+                    :disabled="!isPhone"
+                    placeholder="请输入手机验证码"
+                  />
+                </el-form-item>
+                <el-form-item>
+                  <el-button :disabled="!(isPhone && !showCountdown)" @click="getCode">
+                    <span>获取验证码</span>
+                    <Countdown
+                      v-if="showCountdown"
+                      title=""
+                      :countdown="5"
+                      format="(s)"
+                      @finish="countdownFinish"
+                    ></Countdown>
+                  </el-button>
+                </el-form-item>
+              </el-form>
+              <el-button
+                type="primary"
+                :disabled="!isAllowLogin"
+                @click="submitForm(userFormRef)"
+                :style="{ width: '100%' }"
+                >用户登陆</el-button
+              >
             </div>
-          </div>
-
-          <div @click="toggleLoginMode" class="login_mode m-t-10 finger">
-            <span class="gray">{{ loginModeInfo.loginModeList[loginModeInfo.loginMode].loginModeText}}</span>
-            <div class="login_mode_icon">
-              <WechatOutlined  v-if="loginModeInfo.loginMode === 0"/>
-              <MobileOutlined  v-if="loginModeInfo.loginMode === 1"/>
+            <div v-if="loginModeInfo.loginMode === 1">
+              <div style="text-align: center">
+                <!-- 这里是由微信sdk来渲染二维码 -->
+                <div id="weixinLogin"></div>
+              </div>
             </div>
-          </div>
-        </el-card>
-      </el-col>
 
-      <!-- 右边的二维码 -->
-      <el-col :span="12" class="right_main">
+            <div @click="toggleLoginMode" class="login_mode m-t-10 finger">
+              <span class="gray">{{
+                loginModeInfo.loginModeList[loginModeInfo.loginMode].loginModeText
+              }}</span>
+              <div class="login_mode_icon">
+                <WechatOutlined v-if="loginModeInfo.loginMode === 0" />
+                <MobileOutlined v-if="loginModeInfo.loginMode === 1" />
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+
+        <!-- 右边的二维码 -->
+        <el-col :span="12" class="right_main">
           <el-row>
             <el-col :span="12">
-              <div style="text-align: center;">
-                <img src='@/assets/images/code_login_wechat.png' class='code-image' />
+              <div style="text-align: center">
+                <img src="@/assets/images/code_login_wechat.png" class="code-image" />
                 <div>
                   <!-- 微信图标 -->
                   <WechatOutlined />
@@ -75,8 +89,8 @@
               </div>
             </el-col>
             <el-col :span="12">
-              <div style="text-align: center;">
-                <img src='@/assets/images/code_app.png' class='code-image' />
+              <div style="text-align: center">
+                <img src="@/assets/images/code_app.png" class="code-image" />
                 <div>
                   <!-- 手机图标 -->
                   <MobileOutlined />
@@ -89,21 +103,21 @@
               </div>
             </el-col>
           </el-row>
-          <div class='slogan'>
-            <div style="text-align: center;">
+          <div class="slogan">
+            <div style="text-align: center">
               <p>xxxxxx官方指定平台</p>
               <p>快速挂号 安全放心</p>
             </div>
           </div>
-      </el-col>
-    </el-row>
+        </el-col>
+      </el-row>
 
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="userInfoStore.hideLoginDialog">关闭窗口</el-button>
-      </span>
-    </template>
-  </el-dialog>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="userInfoStore.hideLoginDialog">关闭窗口</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 <script lang="ts">
@@ -115,21 +129,21 @@ export default defineComponent({
 <script setup lang="ts">
 import { ref, reactive, toRefs, computed, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import {useUserInfoStore} from "@/store/modules/user";
-import type { FormInstance, FormRules } from 'element-plus'
-import {sendCode} from "@/api/modules/sms";
+import { useUserInfoStore } from "@/store/modules/user"
+import type { FormInstance, FormRules } from "element-plus"
+import { sendCode } from "@/api/modules/sms"
 import {
   DownOutlined,
   LockOutlined,
   WechatOutlined,
   MobileOutlined,
-  UserOutlined,
-} from '@ant-design/icons-vue';
-import { User,Lock,Search } from '@element-plus/icons-vue'
-import { mobile,code } from "@/utils/validate";
-import Countdown from "@/components/countdown/countdown.vue";
-import {getLoginParam} from "@/api/modules/user";
-import {ElMessage} from "element-plus";
+  UserOutlined
+} from "@ant-design/icons-vue"
+import { User, Lock, Search } from "@element-plus/icons-vue"
+import { mobile, code } from "@/utils/validate"
+import Countdown from "@/components/countdown/countdown.vue"
+import { getLoginParam } from "@/api/modules/user"
+import { ElMessage } from "element-plus"
 
 const route = useRoute()
 const router = useRouter()
@@ -137,73 +151,69 @@ const userInfoStore = useUserInfoStore()
 
 const userFormRef = ref<FormInstance>()
 const userForm = reactive({
-  phone: '', // 手机号
-  code:'' // 验证码
+  phone: "", // 手机号
+  code: "" // 验证码
 })
 // 是否显示倒计时
-let showCountdown = ref(false)
+const showCountdown = ref(false)
 // 登陆模式
-let loginModeInfo = reactive({
-  loginMode: 0,  // 0 手机验证码 1 微信扫码
+const loginModeInfo = reactive({
+  loginMode: 0, // 0 手机验证码 1 微信扫码
   loginModeList: [
     {
       // 手机验证码登陆时候文字显示微信扫码登陆
       loginMode: 0,
-      loginModeText: '微信扫码登陆'
+      loginModeText: "微信扫码登陆"
     },
     {
       loginMode: 1,
-      loginModeText: '手机短信验证码登录'
-
+      loginModeText: "手机短信验证码登录"
     }
   ]
 })
 
-// 计算手机号是否正确
+// 计算手机号是否正确，单独控制手机验证码按钮的状态
 const isPhone = computed(() => {
   return mobile(userForm.phone)
 })
-// 计算是否允许登陆
+
+// 计算是否允许登陆，这里是用户体验优化
 const isAllowLogin = computed(() => {
-  return mobile(userForm.phone) && code(userForm.code,6)
+  return mobile(userForm.phone) && code(userForm.code, 6)
 })
 const checkPhone = (rule: any, value: string, callback: any) => {
   console.log(value)
   if (value.trim().length === 0) {
-    callback(new Error('请输入手机号码'));
+    callback(new Error("请输入手机号码"))
   } else if (mobile(value)) {
-    callback();
+    callback()
   } else {
-    callback(
-      new Error('请输入正确手机号码')
-    );
+    callback(new Error("请输入正确手机号码"))
   }
 }
 const checkCode = (rule: any, value: string, callback: any) => {
-  if(!value){
-    callback(new Error('请输入验证码'));
+  if (!value) {
+    callback(new Error("请输入验证码"))
   } else if (value.trim().length === 0) {
-    callback(new Error('请输入验证码'));
-  } else if (code(value,6)) {
+    callback(new Error("请输入验证码"))
+  } else if (code(value, 6)) {
     callback()
   } else {
-    callback(
-      new Error('请输入正确验证码')
-    );
+    callback(new Error("请输入正确验证码"))
   }
 }
 const rules = reactive<FormRules>({
-  phone: [{ validator: checkPhone, trigger: 'change' }],
-  code: [{ validator: checkCode, trigger: 'change' }],
+  phone: [{ validator: checkPhone, trigger: "change" }],
+  code: [{ validator: checkCode, trigger: "change" }]
 })
-// 发送验证码
+// 发送验证码，这里简化了获取验证码的流程
 const getCode = async () => {
   try {
     showCountdown.value = true
     const res = await sendCode(userForm.phone)
     userForm.code = res
   } catch (error) {
-    ElMessage.error((error as any)?.message || 'Has Error')
+    ElMessage.error((error as any)?.message || "Has Error")
   }
 }
 // 倒计时结束
@@ -245,43 +255,43 @@ const wechatLogin = async () => {
 
     // 调用微信sdk渲染二维码，index中已经以cdn的方式引入了微信登陆的js文件
     const obj = new WxLogin({
-      self_redirect: true,
-      id: 'weixinLogin', // 需要显示的容器id
+      self_redirect: true, // true为iframe内跳转，false为整个页面跳转
+      id: "weixinLogin", // 需要显示的容器id
       appid: res.appid, // 公众号appid wx*******
       scope: res.scope, // 网页默认即可
       // res.redirectUri这的地址是后端的回调地址，用于接受微信授权的code
-      redirect_uri:decodeURIComponent(res.redirectUri),
+      redirect_uri: decodeURIComponent(res.redirectUri),
       state: res.state, // 可设置为简单的随机数加session用来校验
-      style: 'black', // 提供"black"、"white"可选。二维码的样式
-      href: '', // 外部css文件url，需要https
+      style: "black", // 提供"black"、"white"可选。二维码的样式
+      href: "" // 外部css文件url，需要https
     })
     resetForm(userFormRef.value)
   } catch (error) {
-    ElMessage.error((error as any)?.message || 'Has Error')
+    ElMessage.error((error as any)?.message || "Has Error")
   }
 }
 
 // 用户手机登录
 const loginHandler = async () => {
   try {
-    const res = await userInfoStore.login(userForm.phone,userForm.code)
+    const res = await userInfoStore.login(userForm.phone, userForm.code)
     if (route.query && (route.query.redirect as string)) {
-      console.log('redirect',route.query.redirect)
+      console.log("redirect", route.query.redirect)
       await router.replace(decodeURIComponent(route.query.redirect as string))
     }
   } catch (error) {
-    ElMessage.error((error as any)?.message || 'Has Error')
+    ElMessage.error((error as any)?.message || "Has Error")
   }
 }
-const submitForm = (formEl: FormInstance | undefined) => {
+
+// 提交表单，这里的表单是在v-if中的，是有可能为undefined的
+const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
-  formEl.validate((valid) => {
-    if (valid) {
-      loginHandler()
-    } else {
-      return false
-    }
-  })
+  // 提交之前先验证，验证通过后执行登录，这里是安全兜底
+  const valid = await formEl.validate()
+  if (valid) {
+    loginHandler()
+  }
 }
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -292,7 +302,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 // 因为在 el-dialog 上使用了 v-model 双向绑定：
 // v-model 会在用户点击关闭按钮或遮罩层时，自动将 userInfoStore.isShowLoginDialog 设为 false，不需要手动处理。
 const handleClose = () => {
-  console.log('handleClose')
+  console.log("handleClose")
   // 重置登陆模式
   loginModeInfo.loginMode = 0
   // 重置所有信息
@@ -301,17 +311,20 @@ const handleClose = () => {
   userInfoStore.clearTimer()
 }
 // 监视属性
-watch(() => loginModeInfo.loginMode, (newVal) => {
-  if (newVal === 1) {
-    userInfoStore.queryLoginStatus()
-  }else {
-    userInfoStore.clearTimer()
+watch(
+  () => loginModeInfo.loginMode,
+  (newVal) => {
+    if (newVal === 1) {
+      userInfoStore.queryLoginStatus()
+    } else {
+      userInfoStore.clearTimer()
+    }
   }
-})
+)
 </script>
 
 <style lang="scss" scoped>
-.login_wrapper{
+.login_wrapper {
   :deep(.el-dialog__body) {
     border-top: 1px solid #f0f0f0;
     border-bottom: 1px solid #f0f0f0;
@@ -333,22 +346,21 @@ watch(() => loginModeInfo.loginMode, (newVal) => {
   font-weight: normal;
 }
 
-.login_mode{
-  display:flex;
+.login_mode {
+  display: flex;
   flex-direction: column;
-  align-items:center;
-  .login_mode_icon{
+  align-items: center;
+  .login_mode_icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius:50%;
+    border-radius: 50%;
     color: #fff;
     border-color: #ff4d4f;
     background: #ff4d4f;
     height: 30px;
-    width:30px;
-    font-size:16px;
+    width: 30px;
+    font-size: 16px;
   }
 }
-
 </style>
