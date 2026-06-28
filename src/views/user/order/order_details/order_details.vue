@@ -8,8 +8,13 @@
       </template>
       <el-row justify="space-between">
         <el-col :span="8">
+          <!-- light：浅绿色背景，深绿色文字
+                dark：深绿色背景，白色文字
+                plain：白色背景，深绿色边框和文字 -->
           <el-tag effect="dark" type="success">
+            <!-- 有个对勾的图标 -->
             <el-icon><Select /></el-icon>
+            <!-- 已支付等状态 -->
             {{ pageInfo.orderDetailsInfo?.param?.orderStatusString }}
           </el-tag>
         </el-col>
@@ -83,7 +88,11 @@
                   <el-button>取消预约</el-button>
                 </template>
               </el-popconfirm>
-              <el-button @click="handlePay" v-if="pageInfo.orderDetailsInfo?.orderStatus == 0" type="primary">
+              <el-button
+                @click="handlePay"
+                v-if="pageInfo.orderDetailsInfo?.orderStatus == 0"
+                type="primary"
+              >
                 支付
               </el-button>
             </div>
@@ -114,14 +123,14 @@
   <!--  <el-skeleton v-else :rows="9" animated />-->
 </template>
 <script setup lang="ts">
-import {ref, reactive, toRefs, computed, watch, onMounted, onUnmounted} from "vue"
+import { ref, reactive, toRefs, computed, watch, onMounted, onUnmounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import { cancelOrder, getOrderInfo } from "@/api/modules/user"
 import { WechatOutlined } from "@ant-design/icons-vue"
 import { InfoFilled } from "@element-plus/icons-vue"
-import {OrderInfoInterfaceRes} from "@/api/modules/user/interface";
-import {useOrderInfoStore} from "@/store/modules/order";
+import { OrderInfoInterfaceRes } from "@/api/modules/user/interface"
+import { useOrderInfoStore } from "@/store/modules/order"
 const route = useRoute()
 const useOrderInfo = useOrderInfoStore()
 console.log("route", route)
@@ -151,19 +160,17 @@ const cancelOrderReserve = async () => {
 }
 // 支付接口
 const handlePay = () => {
-  useOrderInfo.payOrder(route.query.id as string,getOrderDetailsInfo)
+  useOrderInfo.payOrder(route.query.id as string, getOrderDetailsInfo)
 }
 // 挂载
 onMounted(() => {
   getOrderDetailsInfo()
   // cancelOrder(27)
 })
-
 </script>
 
 <style lang="scss" scoped>
 .card_wrapper {
-
 }
 .box_card {
   min-height: 600px;

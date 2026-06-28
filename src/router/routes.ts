@@ -11,7 +11,7 @@ import type { RouteRecordRaw } from "vue-router"
 // @ts-ignore
 // @ts-ignore
 /**
- * 静态路由（默认路由）(常量路由)
+ * 静态路由（默认路由）(常量路由）
  * 我们的菜单就是通过遍历静态路由表得到的
  */
 export const staticRoutes: Array<RouteRecordRaw> = [
@@ -138,7 +138,7 @@ export const staticRoutes: Array<RouteRecordRaw> = [
         }
       }
     ]
-  },
+  }
 ]
 
 /**
@@ -173,7 +173,7 @@ export const allAsyncRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "挂号订单",
           key: "order"
-        },
+        }
       },
       {
         path: "patient",
@@ -182,7 +182,6 @@ export const allAsyncRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "就诊人管理",
           key: "patient"
-
         }
       },
       {
@@ -192,7 +191,6 @@ export const allAsyncRoutes: Array<RouteRecordRaw> = [
         meta: {
           title: "帐号信息",
           key: "profile"
-
         }
       },
       {
@@ -205,11 +203,11 @@ export const allAsyncRoutes: Array<RouteRecordRaw> = [
         }
       }
     ]
-  },
+  }
 ]
 
 /**
- * 定义任意路由
+ * 定义任意路由，兜底路由
  * ：这个路由是用户随意输入路径的时候要匹配的，最终重定向到404，这个路由在注册的时候，必须是注册在最后一个
  *  */
 

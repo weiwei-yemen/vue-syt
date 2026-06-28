@@ -1,6 +1,7 @@
 <template>
   <div class="card_wrapper">
     <el-card class="box_card">
+      el-card内部定义了两个擦槽,header（卡片顶部）和default（主体）
       <template #header>
         <div class="card_header">
           <h2>实名信息</h2>
@@ -8,11 +9,13 @@
       </template>
       <div style="text-align: center" class="gray">
         <p>
+          <!-- antd的图标组件，自动导入的，不需要导入了 -->
           <InfoCircleOutlined className="m-r-5" />
           完成实名认证后才能添加就诊人，正常进行挂号，为了不影响后续步骤，建议提前实名认证。
         </p>
       </div>
       <div v-if="pageInfo.userRealNameInfo?.authStatus === 0" class="user_ruleForm_wrapper">
+        <!-- status-icon控制是否显示表单校验反馈图标，校验通过会显示绿色的✅，否则显示红色❌ -->
         <el-form
           ref="ruleFormRef"
           :model="ruleForm"
@@ -27,10 +30,11 @@
           <el-form-item label="证件类型" prop="certificatesType">
             <el-select v-model="ruleForm.certificatesType" placeholder="请选择证件类型" clearable>
               <el-option
-                v-for="(item,index) in pageInfo.certificatesTypeOptions"
+                v-for="(item, index) in pageInfo.certificatesTypeOptions"
                 :key="item.id"
                 :label="item.name"
-                :value="item.value" />
+                :value="item.value"
+              />
             </el-select>
           </el-form-item>
 
@@ -52,10 +56,17 @@
         </el-form>
       </div>
       <div v-else class="descriptions_wrapper">
+        <!-- 描述列表组件，用于以表格形式展示一组只读的数据项。 -->
         <el-descriptions title="" :column="1" border :width="200" size="large">
-          <el-descriptions-item label-align="right" label="用户姓名">{{ pageInfo.userRealNameInfo?.name }}</el-descriptions-item>
-          <el-descriptions-item label-align="right" label="证件类型">{{ certificatesTypeName }}</el-descriptions-item>
-          <el-descriptions-item label-align="right" label="证件号码">{{ pageInfo.userRealNameInfo?.certificatesNo }}</el-descriptions-item>
+          <el-descriptions-item label-align="right" label="用户姓名">{{
+            pageInfo.userRealNameInfo?.name
+          }}</el-descriptions-item>
+          <el-descriptions-item label-align="right" label="证件类型">{{
+            certificatesTypeName
+          }}</el-descriptions-item>
+          <el-descriptions-item label-align="right" label="证件号码">{{
+            pageInfo.userRealNameInfo?.certificatesNo
+          }}</el-descriptions-item>
         </el-descriptions>
       </div>
     </el-card>
@@ -71,54 +82,61 @@ export default defineComponent({
 <script setup lang="ts">
 import { ref, reactive, toRefs, computed, watch, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import {getCertTypeList, reqUserInfo, userAuth} from "@/api/modules/user"
+import { getCertTypeList, reqUserInfo, userAuth } from "@/api/modules/user"
 import type { FormInstance, FormRules } from "element-plus"
 import UpLoadImg from "@/components/upload-img/upload-img.vue"
 import samplePicture from "@/assets/images/auth_example.png"
-import {CertificatesTypeInterfaceRes, UserInfoInterfaceRes} from "@/api/modules/user/interface";
-import {ElMessage} from "element-plus";
+import { CertificatesTypeInterfaceRes, UserInfoInterfaceRes } from "@/api/modules/user/interface"
+import { ElMessage } from "element-plus"
 const route = useRoute()
 const pageInfo = reactive({
   userRealNameInfo: {} as UserInfoInterfaceRes,
-  certificatesTypeOptions:[] as CertificatesTypeInterfaceRes[]
+  certificatesTypeOptions: [] as CertificatesTypeInterfaceRes[]
 })
 // 计算证据类型
 const certificatesTypeName = computed(() => {
-  return (pageInfo.certificatesTypeOptions.find((item: any) => {
-    return item.value === pageInfo.userRealNameInfo.certificatesType
-  }) as any)?.name
+  return (
+    pageInfo.certificatesTypeOptions.find((item: any) => {
+      return item.value === pageInfo.userRealNameInfo.certificatesType
+    }) as any
+  )?.name
 })
+
 // 图片上传相关
-const upLoadImgRef = ref('') as any // 获取子组件ref
+const upLoadImgRef = ref("") as any // 获取子组件ref
 // 图片上传 更新图片列表
 const updateUpLoadFileListHandler = (newFileList: any) => {
   ruleForm.fileList = newFileList
 }
 // 表单相关
 const ruleFormRef = ref<FormInstance>()
+
 const ruleForm = reactive({
   name: "", // 姓名
   certificatesNo: "", // 证件号码
   certificatesType: "", // 证件类型
-  fileList: [] as any[]// 上传证件
+  fileList: [] as any[] // 上传证件
 })
+
+// 这里的fileList是上传文件的元数据数组
 const checkFile = (rule: any, value: string, callback: any) => {
-  console.log('rule',rule)
-  console.log('value',value)
+  console.log("rule", rule)
+  console.log("value", value)
   if (value.length === 0) {
-    callback(new Error('请上传证件'));
-  }  else {
-    callback();
+    callback(new Error("请上传证件"))
+  } else {
+    callback()
   }
 }
 const rules = reactive<FormRules>({
   name: [{ required: true, message: "请输入联系人姓名全称", trigger: "blur" }],
   certificatesNo: [{ required: true, message: "请输入联系人证件号码", trigger: "blur" }],
   certificatesType: [{ required: true, message: "请选择证件类型", trigger: "change" }],
-  fileList: [{ required: true,validator: checkFile, trigger: 'change' }],
+  fileList: [{ required: true, validator: checkFile, trigger: "change" }]
 })
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
+  // 这里其实只使用了fileList中的url
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       console.log("submit!")
@@ -129,7 +147,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         certificatesUrl: ruleForm.fileList[0].response.data
       }
       await userAuth(params)
-      ElMessage.success('提交成功')
+      ElMessage.success("提交成功")
       // 更新信息
       getUserRealNameInfo()
     } else {
@@ -171,7 +189,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.box_card{
+.box_card {
   min-height: 600px;
 }
 .card_header {
@@ -183,14 +201,13 @@ onMounted(() => {
   .user_ruleForm {
     width: 500px;
   }
-  :deep(.el-select){
-    flex:1;
+  :deep(.el-select) {
+    flex: 1;
   }
 }
-.descriptions_wrapper{
-  :deep(.el-descriptions__label){
+.descriptions_wrapper {
+  :deep(.el-descriptions__label) {
     width: 100px;
   }
 }
-
 </style>

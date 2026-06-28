@@ -57,17 +57,18 @@ export const getOrderInfoPageList = (
   return request<null, PageInterfaceRes<OrderInfoInterfaceRes[]>>({
     url: `/api/order/orderInfo/auth/${page}/${limit}`,
     method: "get",
+    // params是查询参数，data配置才是body中的参数
     params: searchObj
   })
 }
-// 获取订单类型
+// 获取订单类型，config对象风格
 export const getStatusList = () => {
   return request<null, StatusListInterfaceRes[]>({
     url: `/api/order/orderInfo/auth/getStatusList`,
     method: "get"
   })
 }
-// 获取证件类型列表
+// 获取证件类型列表，简写风格
 export const getCertTypeList = () => {
   return request.get<null, CertificatesTypeInterfaceRes[]>(
     "api/cmn/dict/findByDictCode/CertificatesType"

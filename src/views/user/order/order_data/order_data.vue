@@ -12,9 +12,11 @@
           <el-select
             @change="selectChange"
             v-model="searchInfo.patientId"
-            clearable placeholder="请选择">
+            clearable
+            placeholder="请选择"
+          >
             <el-option
-              v-for="item in [{id:'',name:'选择所有患者'},...orderInfo.patientList]"
+              v-for="item in [{ id: '', name: '选择所有患者' }, ...orderInfo.patientList]"
               :key="item.id"
               :label="item.name"
               :value="item.id"
@@ -26,9 +28,14 @@
           <el-select
             @change="selectChange"
             v-model="searchInfo.orderStatus"
-            clearable placeholder="请选择">
+            clearable
+            placeholder="请选择"
+          >
             <el-option
-              v-for="item in [{status:'',comment:'选择所有订单状态'},...orderInfo.orderStatusList]"
+              v-for="item in [
+                { status: '', comment: '选择所有订单状态' },
+                ...orderInfo.orderStatusList
+              ]"
               :key="item.status"
               :label="item.comment"
               :value="item.status"
@@ -37,25 +44,27 @@
         </el-col>
       </el-row>
       <div>
-        <el-table :data="orderInfo.orderList" style="width: 100%" size="default" >
-          <el-table-column prop="reserveDate" label="就诊时间"  width="130">
+        <el-table :data="orderInfo.orderList" style="width: 100%" size="default">
+          <el-table-column prop="reserveDate" label="就诊时间" width="130">
             <template #default="{ row }">
-              <span>{{ `${row.reserveDate} ${row.reserveTime === 0 ? '上午' : '下午'}`}}</span>
+              <span>{{ `${row.reserveDate} ${row.reserveTime === 0 ? "上午" : "下午"}` }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="hosname" label="医院"  />
+          <el-table-column prop="hosname" label="医院" />
           <el-table-column prop="depname" label="科室" width="150" />
-          <el-table-column prop="title" label="医生"  />
-          <el-table-column prop="amount" label="医事服务费"  />
+          <el-table-column prop="title" label="医生" />
+          <el-table-column prop="amount" label="医事服务费" />
           <el-table-column prop="patientName" label="就诊人" />
-          <el-table-column prop="orderStatusString" label="订单状态" >
+          <el-table-column prop="orderStatusString" label="订单状态">
             <template #default="{ row }">
-              <span>{{ `${row.param.orderStatusString}`}}</span>
+              <span>{{ `${row.param.orderStatusString}` }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="80">
             <template #default="{ row }">
-              <el-button link type="primary" size="small"  @click="handleDetails(row.id)">详情</el-button>
+              <el-button link type="primary" size="small" @click="handleDetails(row.id)"
+                >详情</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -82,24 +91,28 @@ export default defineComponent({
 })
 </script>
 <script setup lang="ts">
-import { ref, reactive, toRefs, computed, watch,onMounted } from "vue"
+import { ref, reactive, toRefs, computed, watch, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import {findAllPatientList, getOrderInfoPageList, getStatusList} from "@/api/modules/user";
+import { findAllPatientList, getOrderInfoPageList, getStatusList } from "@/api/modules/user"
 import { usePage } from "@/hooks/usePagination"
-import {OrderInfoInterfaceRes, PatientInfoInterfaceRes, StatusListInterfaceRes} from "@/api/modules/user/interface";
+import {
+  OrderInfoInterfaceRes,
+  PatientInfoInterfaceRes,
+  StatusListInterfaceRes
+} from "@/api/modules/user/interface"
 
 const route = useRoute()
 const router = useRouter()
 const orderInfo = reactive({
   orderList: [] as OrderInfoInterfaceRes[],
   patientList: [] as PatientInfoInterfaceRes[],
-  orderStatusList: [] as StatusListInterfaceRes[],
+  orderStatusList: [] as StatusListInterfaceRes[]
 })
+
 const searchInfo = reactive({
-  patientId: '',
-  orderStatus: '',
+  patientId: "",
+  orderStatus: ""
 })
-// 获取搜索方法
 const getOrderList = async () => {
   try {
     const res = await getOrderInfoPageList(pageInfo.currentPage, pageInfo.pageSize, searchInfo)
@@ -137,8 +150,8 @@ const selectChange = () => {
   getOrderList()
 }
 // 查看详情
-const handleDetails = (id:string | number) => {
-    router.push({path: '/user/order',query:{id: id}})
+const handleDetails = (id: string | number) => {
+  router.push({ path: "/user/order", query: { id: id } })
 }
 // 挂载
 onMounted(() => {
@@ -146,27 +159,25 @@ onMounted(() => {
   getOrderList()
   getOrderStatusList()
 })
-
 </script>
 
 <style lang="scss" scoped>
-.box_card{
+.box_card {
   min-height: 600px;
 }
-.card_header{
-  font-size:21px;
+.card_header {
+  font-size: 21px;
 }
-.content_container{
-  display:flex;
-  align-items:center;
+.content_container {
+  display: flex;
+  align-items: center;
   width: 100%;
 }
 .el-col {
   display: flex;
-  align-items:center;
-  span{
+  align-items: center;
+  span {
     margin-right: 10px;
   }
 }
 </style>
-

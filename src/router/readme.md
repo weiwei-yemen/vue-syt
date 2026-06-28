@@ -53,3 +53,70 @@ location / {
 
 - Hash：`/#/user/profile` → 服务器收到的是 `GET /` → 天然能找到 `index.html` → 不需要配置
 - History：`/user/profile` → 服务器收到的是 `GET /user/profile` → 找不到文件 → 必须配兜底规则
+
+# 如何划分动态路由和静态路由
+
+用户说得对，我需要重新核实项目的实际路由配置。让我查看相关文件。
+你说得对，我之前的解释不够准确。从实际代码来看，本项目的路由划分逻辑需要修正。
+
+## 实际情况：静态路由中也有需要登录的页面
+
+在 [routes.ts](file:///Users/simon/projects/syt-vue3-master/src/router/routes.ts) 中，静态路由 `staticRoutes` 里有两个子路由标记了 `needLogin: true`：
+
+- [registration_step_1](file:///Users/simon/projects/syt-vue3-master/src/router/routes.ts#L82-L91)（第 89 行）：`needLogin: true`
+- [registration_step_2](file:///Users/simon/projects/syt-vue3-master/src/router/routes.ts#L92-L101)（第 99 行）：`needLogin: true`
+
+这两个挂号步骤页属于静态路由，但必须登录才能访问。
+
+## 本项目真正的两层权限设计
+
+所以本项目的权限控制实际上是**两层叠加**的：
+
+### 第一层：路由分类（静态 / 动态）—— 决定"何时注册"
+
+| 类型         | 注册时机                                           | 整体权限属性                                                       |
+| ------------ | -------------------------------------------------- | ------------------------------------------------------------------ |
+| **静态路由** | 应用启动时全部注册                                 | 默认公开，但**允许个别页面**通过 `meta.needLogin` 单独标记需要登录 |
+| **动态路由** | 登录后注册（注释中提到"根据用户权限信息"动态添加） | 整体受保护，全部需要登录                                           |
+
+### 第二层：`meta.needLogin` —— 在静态路由中做细粒度控制
+
+关键在 [permission.ts](file:///Users/simon/projects/syt-vue3-master/src/router/permission.ts#L33) 第 33 行的守卫逻辑：
+
+```js
+} else if (staticRoutesAndAnyRoutesNameList.indexOf(to.name) !== -1 && !to.meta.needLogin) {
+    next()
+}
+```
+
+注意 `&& !to.meta.needLogin` 这个条件——即使目标路由属于静态路由，只要它标记了 `needLogin: true`，就会被拦截，要求登录。
+
+## 修正后的划分依据
+
+所以更准确的说法是：
+
+- **静态路由**：应用启动时即注册的基础路由。其中**大部分**是公开页面（首页、医院信息、404 等），但**个别页面**通过 `meta.needLogin: true` 标记为需要登录（如挂号步骤页）。静态路由同时承担了菜单渲染的职责（见 routes.ts 第 15 行注释）。
+- **动态路由**：整体作为受保护路由集合，设计上需登录后根据权限动态注册。目前本项目动态路由（`/user/*`）整体都要求登录。
+
+**核心区别不在于"是否需要登录"这一单一维度，而在于"路由何时注册"以及"是否整体受保护"。** 静态路由中需要登录的个别页面，是通过 `meta.needLogin` 这个细粒度标记来实现的，而非通过路由分类本身。
+
+---
+
+我之前记忆中"静态路由=公开页面、无需登录"的描述是不准确的，我来更新一下。
+这两条记忆都表述为"静态路由=公开页面、无需登录"，与实际代码不符，我来修正它们。两条内容高度重叠，我将合并为一条准确的记忆。
+已完成记忆修正。
+
+## 总结
+
+你的质疑完全正确。本项目实际的权限设计是**两层叠加**的：
+
+1. **路由分类层**（静态/动态）：决定路由"何时注册"和"是否整体受保护"
+
+   - 静态路由：启动时注册，**默认公开**，但允许个别页面通过 `meta.needLogin: true` 标记需要登录
+   - 动态路由：整体受保护，登录后注册
+
+2. **`meta.needLogin` 细粒度控制层**：在静态路由内部，对个别页面（如挂号步骤页 `registration_step_1`、`registration_step_2`）单独标记需要登录
+
+permission.ts 守卫通过 `staticRoutesAndAnyRoutesNameList.indexOf(to.name) !== -1 && !to.meta.needLogin` 这个联合条件，既放行了静态路由中的公开页面，又拦截了静态路由中标记了 `needLogin` 的页面。
+
+所以**"是否需要登录"不是划分静态/动态路由的唯一依据**，更准确的说法是"路由何时注册"与"是否整体受保护"。我之前说"静态路由=无需登录"是不准确的，已同步修正了相关记忆。

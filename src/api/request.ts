@@ -51,6 +51,17 @@ service.interceptors.response.use(
   async (response: AxiosResponse<ResponseData<any>>) => {
     // 对响应数据做点什么
     const res = response.data
+    // 这里判断逻辑比较混乱，可以按照如下思路进行优化
+    //     HTTP 2xx → 成功回调 → 检查 res.code（业务码）
+    //                         ├─ 200 → 正常返回数据
+    //                         ├─ 208 → 业务层"未登录"
+    //                         └─ 其他 → 通用错误提示
+
+    // HTTP 非2xx → 错误回调 → 检查 response.status（HTTP码）
+    //                             ├─ 401 → token失效，登出
+    //                             ├─ 404 → 接口不存在
+    //                             ├─ 500 → 服务器错误
+    //                             └─ 网络异常 → 超时/断网
     if (res.code !== 200) {
       /* 成功数据的code值为20000/200 */
       // ElMessage是顶部通知条，不阻断，轻量提示，无交互
@@ -76,6 +87,7 @@ service.interceptors.response.use(
       // `token` 过期或者账号已在别处登录
       if (response.status === 401) {
         const storeUserInfo = useUserInfoStore(pinia)
+        // 这里没必要使用await
         await storeUserInfo.reset()
         storeUserInfo.showLoginDialog()
         ElMessageBox.alert("你已被登出，请重新登录", "提示", {})
@@ -83,11 +95,13 @@ service.interceptors.response.use(
           .catch(() => {})
       }
       return Promise.reject(service.interceptors.response)
+      // 应该做如下优化：这样调用方就能拿到 { code, data, message }，可以根据 res.code 做进一步处理。
+      // return Promise.reject(res)
     } else {
       return res.data /* 返回成功响应数据中的data属性数据 */
     }
   },
-  (error) => {
+  (error: any) => {
     // 对响应错误做点什么
     if (error.message.indexOf("timeout") != -1) {
       ElMessage.error("网络超时")
