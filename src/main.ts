@@ -42,6 +42,7 @@ const pageStackRouter = createPageStackRouter({ router })
 app.use(ElementPlus)
 app.use(Antd)
 app.use(router)
+// 全局注册PageStackRouterView组件，vue组件中无需import即可使用
 app.use(pageStackRouter)
 app.use(pinia)
 // 路由加载完成后挂载
